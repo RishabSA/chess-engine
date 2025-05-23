@@ -5,6 +5,8 @@ import sys
 import os
 from minimax_chess import get_minimax_move
 
+# Build with: pyinstaller --onedir --windowed --add-data "assets:assets" --icon=assets/icon.icns pygame_minimax_chess.py
+
 # When frozen by PyInstaller, assets are unpacked into sys._MEIPASS
 if getattr(sys, "frozen", False):
     BASE_DIR = sys._MEIPASS
