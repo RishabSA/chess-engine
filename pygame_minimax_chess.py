@@ -2,7 +2,19 @@ import pygame
 import chess
 import time
 import sys
+import os
 from minimax_chess import get_minimax_move
+
+# When frozen by PyInstaller, assets are unpacked into sys._MEIPASS
+if getattr(sys, "frozen", False):
+    BASE_DIR = sys._MEIPASS
+else:
+    BASE_DIR = os.path.dirname(__file__)
+
+
+def asset_path(rel_path):
+    return os.path.join(BASE_DIR, rel_path)
+
 
 SQUARE_SIZE = 80
 BOARD_PIXELS = SQUARE_SIZE * 8
@@ -22,7 +34,7 @@ def load_images():
     imgs = {}
     for color in ["w", "b"]:
         for p in ["P", "N", "B", "R", "Q", "K"]:
-            raw = pygame.image.load(f"assets/{color}{p}.png")
+            raw = pygame.image.load(asset_path(f"assets/{color}{p}.png"))
             imgs[f"{color}{p}"] = pygame.transform.smoothscale(
                 raw, (SQUARE_SIZE, SQUARE_SIZE)
             )
@@ -269,7 +281,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption("Chess Engine with Minimax")
-    game_icon = pygame.image.load("assets/chess_engine_icon.png")
+    game_icon = pygame.image.load(asset_path("assets/chess_engine_icon.png"))
     pygame.display.set_icon(game_icon)
 
     clock = pygame.time.Clock()
