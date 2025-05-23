@@ -2,7 +2,6 @@ import pygame
 import chess
 import time
 import sys
-import os
 from minimax_chess import get_minimax_move
 
 SQUARE_SIZE = 80
@@ -171,8 +170,10 @@ def draw_captured(screen, images, white_captures, black_captures):
 def draw_engine_banner(screen, text):
     font = pygame.font.SysFont(None, ENGINE_FONT_SIZE)
     surf = font.render(text, True, pygame.Color("white"))
+
     bar = pygame.Surface((WINDOW_WIDTH, ENGINE_FONT_SIZE + 10), pygame.SRCALPHA)
     bar.fill((0, 0, 0, 150))
+
     screen.blit(bar, (0, WINDOW_HEIGHT - (ENGINE_FONT_SIZE + 10)))
     screen.blit(surf, (10, WINDOW_HEIGHT - (ENGINE_FONT_SIZE + 6)))
 
@@ -181,11 +182,14 @@ def choose_color(screen, clock):
     font = pygame.font.SysFont(None, ENGINE_FONT_SIZE)
     prompt = font.render("Choose your side", True, pygame.Color("white"))
     btn_font = pygame.font.SysFont(None, LABEL_FONT_SIZE)
+
     w_surf = btn_font.render("White", True, pygame.Color("black"))
     b_surf = btn_font.render("Black", True, pygame.Color("black"))
+
     btn_w, btn_h = w_surf.get_width() + 20, w_surf.get_height() + 10
     total_w = btn_w * 2 + 20
     start_x = (WINDOW_WIDTH - total_w) // 2
+
     y = WINDOW_HEIGHT // 2
     white_btn = pygame.Rect(start_x, y, btn_w, btn_h)
     black_btn = pygame.Rect(start_x + btn_w + 20, y, btn_w, btn_h)
@@ -204,28 +208,27 @@ def choose_color(screen, clock):
 
         screen.fill(pygame.Color("grey20"))
         screen.blit(prompt, ((WINDOW_WIDTH - prompt.get_width()) // 2, y - btn_h - 30))
+
         pygame.draw.rect(screen, pygame.Color("white"), white_btn)
         screen.blit(w_surf, (white_btn.x + 10, white_btn.y + 5))
+
         pygame.draw.rect(screen, pygame.Color("white"), black_btn)
         screen.blit(b_surf, (black_btn.x + 10, black_btn.y + 5))
+
         pygame.display.flip()
         clock.tick(FPS)
 
 
 def show_end_game_dialog(screen, clock, message):
-    """
-    Pops up a simple dialog over the board showing the message and a restart button. Returns only once Restart is clicked.
-    """
     title_font = pygame.font.SysFont(None, ENGINE_FONT_SIZE)
     btn_font = pygame.font.SysFont(None, LABEL_FONT_SIZE)
 
     title_surf = title_font.render(message, True, pygame.Color("white"))
     w_surf = btn_font.render("Restart", True, pygame.Color("black"))
 
-    # Button dimensions
     btn_w = w_surf.get_width() + 20
     btn_h = w_surf.get_height() + 10
-    total_w = btn_w
+
     x = (WINDOW_WIDTH - btn_w) // 2
     y = (WINDOW_HEIGHT - btn_h) // 2 + 40
 
@@ -310,18 +313,16 @@ def main():
             elif ev.type == pygame.MOUSEBUTTONUP and dragging:
                 dest = screen_to_board(ev.pos, orient_white)
 
-                # Handle castling if the user dragged a rook onto their king
                 mv = None
                 if dest is not None:
-                    # Standard king move or other
                     mv = chess.Move(drag_src_sq, dest)
-                    # If that isn’t legal, maybe they meant to castle by dropping the rook on the king
                     if (
                         mv not in board.legal_moves
                         and board.piece_type_at(drag_src_sq) == chess.ROOK
                     ):
                         king_sq = board.king(user_color)
-                        # decide side by file comparison
+
+                        # Decide side by file comparison
                         if chess.square_file(drag_src_sq) > chess.square_file(king_sq):
                             # Kingside castle
                             mv = chess.Move(king_sq, king_sq + 2)
@@ -350,7 +351,7 @@ def main():
                             screen, clock, f"{winner} wins by checkmate"
                         )
                         if choice == "restart":
-                            main()  # Restart everything
+                            main()
                             return
 
                     # Redraw
@@ -396,7 +397,7 @@ def main():
                             screen, clock, f"{winner} wins by checkmate"
                         )
                         if choice == "restart":
-                            main()  # Restart everything
+                            main()
                             return
 
                     print(f"Engine moved {eng} in {time.time()-start:.2f}s")
